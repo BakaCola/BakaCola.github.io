@@ -16,24 +16,22 @@
   <meta name="author" content="Baka Cola">
   <meta name="keywords" content="">
   
-    <meta name="description" content="K3s 部署Why K3s？ K3s 是轻量级的 Kubernetes。K3s 易于安装，仅需要 Kubernetes 内存的一半，所有组件都在一个小于 100 MB 的二进制文件中。  对于一部分的服务器而言，其服务器性能可能不足以支撑K8S的运行，或者说想要把更多的计算资源给到自己想要运行的服务时，这时可以考虑选择K3S。相较于K8S，其所需要的硬件配置更低，具体可以在这里查看K3S所需要的安">
-<meta property="og:type" content="article">
-<meta property="og:title" content="K3s+Kubesphere+Helm 部署">
-<meta property="og:url" content="https://bakacola.github.io/2023/10/91349a007d9e.html">
+    <meta property="og:type" content="article">
+<meta property="og:title" content="Redis集群部署">
+<meta property="og:url" content="https://bakacola.github.io/2023/10/2526cc97d9e8.html">
 <meta property="og:site_name" content="未来のBlog">
-<meta property="og:description" content="K3s 部署Why K3s？ K3s 是轻量级的 Kubernetes。K3s 易于安装，仅需要 Kubernetes 内存的一半，所有组件都在一个小于 100 MB 的二进制文件中。  对于一部分的服务器而言，其服务器性能可能不足以支撑K8S的运行，或者说想要把更多的计算资源给到自己想要运行的服务时，这时可以考虑选择K3S。相较于K8S，其所需要的硬件配置更低，具体可以在这里查看K3S所需要的安">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-10-31T03:48:00.000Z">
-<meta property="article:modified_time" content="2023-10-31T15:54:00.000Z">
+<meta property="article:published_time" content="2023-10-31T10:06:00.000Z">
+<meta property="article:modified_time" content="2023-10-31T10:06:00.000Z">
 <meta property="article:author" content="Baka Cola">
-<meta property="article:tag" content="K3s">
-<meta property="article:tag" content="Kubesphere">
-<meta property="article:tag" content="Helm">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="Cluster">
+<meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>K3s+Kubesphere+Helm 部署 - 未来のBlog</title>
+  <title>Redis集群部署 - 未来のBlog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +197,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="K3s+Kubesphere+Helm 部署"></span>
+            <span id="subtitle" data-typed-text="Redis集群部署"></span>
           
         </div>
 
@@ -210,7 +208,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-10-31 11:48" pubdate>
+        <time datetime="2023-10-31 18:06" pubdate>
           2023年10月31日
         </time>
       </span>
@@ -222,7 +220,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.8k 字
+          0 字
         
       </span>
     
@@ -233,7 +231,7 @@
         
         
         
-          16 分钟
+          1 分钟
         
       </span>
     
@@ -270,136 +268,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">K3s+Kubesphere+Helm 部署</h1>
-            
-              <p class="note note-info">
-                
-                  
-                    本文最后更新于：2023年10月31日
-                  
-                
-              </p>
+            <h1 id="seo-header">Redis集群部署</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="K3s-部署"><a href="#K3s-部署" class="headerlink" title="K3s 部署"></a>K3s 部署</h1><h2 id="Why-K3s？"><a href="#Why-K3s？" class="headerlink" title="Why K3s？"></a>Why K3s？</h2><blockquote>
-<p>K3s 是轻量级的 Kubernetes。K3s 易于安装，仅需要 Kubernetes 内存的一半，所有组件都在一个小于 100 MB 的二进制文件中。</p>
-</blockquote>
-<p>对于一部分的服务器而言，其服务器性能可能不足以支撑K8S的运行，或者说想要把更多的计算资源给到自己想要运行的服务时，这时可以考虑选择K3S。相较于K8S，其所需要的硬件配置更低，具体可以在<a target="_blank" rel="noopener" href="https://docs.k3s.io/zh/installation/requirements"><strong>这里</strong></a>查看K3S所需要的安装要求。以下截取了官网中对于硬件的最低建议：</p>
-<table>
-<thead>
-<tr>
-<th>Spec</th>
-<th>最低</th>
-<th>推荐</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>CPU</td>
-<td>1 核</td>
-<td>2 核</td>
-</tr>
-<tr>
-<td>内存</td>
-<td>512 MB</td>
-<td>1 GB</td>
-</tr>
-</tbody></table>
-<p><strong>注意：</strong> K3S默认使用<strong>Sqlite</strong>作为默认存储机制的轻量级存储后端，使用<strong>containerd</strong>作为容器的运行环境。倘若要进行修改，可以在安装的时候加以参数进行设置，详细见<a href="#%E6%8C%87%E5%AE%9A%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%AE%89%E8%A3%85K3s">指定配置项安装K3s部分</a>。</p>
-<h2 id="使用在线脚本进行部署"><a href="#使用在线脚本进行部署" class="headerlink" title="使用在线脚本进行部署"></a>使用在线脚本进行部署</h2><blockquote>
-<p>参考连接：<a target="_blank" rel="noopener" href="https://docs.k3s.io/zh/quick-start">https://docs.k3s.io/zh/quick-start</a></p>
-</blockquote>
-<p>使用官方源在线下载脚本并部署（速度较慢），</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -sfL https://get.k3s.io | sh -<br></code></pre></td></tr></table></figure>
-<p>或者使用镜像源下载脚本并使用国内镜像进行部署（推荐）。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -<br></code></pre></td></tr></table></figure>
-
-<h2 id="使用离线镜像进行部署"><a href="#使用离线镜像进行部署" class="headerlink" title="使用离线镜像进行部署"></a>使用离线镜像进行部署</h2><h2 id="指定配置项安装K3s"><a href="#指定配置项安装K3s" class="headerlink" title="指定配置项安装K3s"></a>指定配置项安装K3s</h2><blockquote>
-<p>参考连接：<a target="_blank" rel="noopener" href="https://docs.k3s.io/zh/installation/configuration">https://docs.k3s.io/zh/installation/configuration</a></p>
-</blockquote>
-<h3 id="部分可能用到的配置项："><a href="#部分可能用到的配置项：" class="headerlink" title="部分可能用到的配置项："></a>部分可能用到的配置项：</h3><h4 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h4><table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>环境变量</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>--datastore-endpoint</code> value</td>
-<td>K3S_DATASTORE_ENDPOINT</td>
-<td>指定 etcd、Mysql、Postgres 或 Sqlite（默认）数据源名称。</td>
-</tr>
-</tbody></table>
-<h4 id="Agent"><a href="#Agent" class="headerlink" title="Agent"></a>Agent</h4><h5 id="Agent节点"><a href="#Agent节点" class="headerlink" title="Agent节点"></a>Agent节点</h5><table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>环境变量</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>–node-name value</td>
-<td>K3S_NODE_NAME</td>
-<td>节点名称</td>
-</tr>
-</tbody></table>
-<h5 id="Agent运行时"><a href="#Agent运行时" class="headerlink" title="Agent运行时"></a>Agent运行时</h5><table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>默认值</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>--docker</code></td>
-<td>-</td>
-<td>用 docker 代替 containerd</td>
-</tr>
-<tr>
-<td><code>--private-registry value</code></td>
-<td>“&#x2F;etc&#x2F;rancher&#x2F;k3s&#x2F;registries.yaml”</td>
-<td>私有镜像仓库配置文件</td>
-</tr>
-</tbody></table>
-<h3 id="使用配置项进行安装"><a href="#使用配置项进行安装" class="headerlink" title="使用配置项进行安装"></a>使用配置项进行安装</h3><blockquote>
-<p>参考连接：<a target="_blank" rel="noopener" href="https://docs.k3s.io/zh/installation/configuration">https://docs.k3s.io/zh/installation/configuration</a></p>
-</blockquote>
-<p>要在安装时使用指定配置项进行K3S的安装，可以使用3种方式进行配置项的指定</p>
-<h4 id="在执行安装脚本前指定配置项环境变量的值"><a href="#在执行安装脚本前指定配置项环境变量的值" class="headerlink" title="在执行安装脚本前指定配置项环境变量的值"></a>在执行安装脚本前指定配置项环境变量的值</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn K3S_DATASTORE_ENDPOINT=etcd sh -<br></code></pre></td></tr></table></figure>
-
-<h4 id="在执行安装脚本前使用INSTALL-K3S-EXEC指定安装的参数"><a href="#在执行安装脚本前使用INSTALL-K3S-EXEC指定安装的参数" class="headerlink" title="在执行安装脚本前使用INSTALL_K3S_EXEC指定安装的参数"></a>在执行安装脚本前使用<code>INSTALL_K3S_EXEC</code>指定安装的参数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn  sh -<br></code></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="卸载K3s"><a href="#卸载K3s" class="headerlink" title="卸载K3s"></a>卸载K3s</h2><p>若使用的为脚本安装方式，则在安装过程中会生成一个卸载脚本，该脚本为于</p>
-<p><code>/usr/local/bin/k3s-uninstall.sh</code>或者<code>/usr/local/bin/k3s-uninstall.sh</code></p>
-<p>可以通过以下指令卸载K3S：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><br>bash /usr/local/bin/k3s-uninstall.sh<br><span class="hljs-comment"># 或者使用以下指令</span><br>bash /usr/local/bin/k3s-uninstall.sh<br></code></pre></td></tr></table></figure>
-
-
-
-<h1 id="在K3s上部署Kubesphere"><a href="#在K3s上部署Kubesphere" class="headerlink" title="在K3s上部署Kubesphere"></a>在K3s上部署Kubesphere</h1><h2 id="安装Kubesphere"><a href="#安装Kubesphere" class="headerlink" title="安装Kubesphere"></a>安装Kubesphere</h2><blockquote>
-<p>参考连接：<a target="_blank" rel="noopener" href="https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/introduction/overview/">https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/introduction/overview/</a></p>
-</blockquote>
-<h3 id="卸载Kubesphere"><a href="#卸载Kubesphere" class="headerlink" title="卸载Kubesphere"></a>卸载Kubesphere</h3><blockquote>
-<p>参考连接：<a target="_blank" rel="noopener" href="https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/uninstall-kubesphere-from-k8s/">https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/uninstall-kubesphere-from-k8s/</a></p>
-</blockquote>
-<p>使用</p>
-<p>具体内容如下：</p>
-<h1 id="Helm部署"><a href="#Helm部署" class="headerlink" title="Helm部署"></a>Helm部署</h1><h3 id="安装Helm"><a href="#安装Helm" class="headerlink" title="安装Helm"></a>安装Helm</h3><blockquote>
-<p>参考连接：<a target="_blank" rel="noopener" href="https://helm.sh/zh/docs/intro/install/">https://helm.sh/zh/docs/intro/install/</a></p>
-</blockquote>
-<blockquote>
-<p>参考连接：</p>
-</blockquote>
-<p><strong>注意</strong>：在安装完Helm后，应该指定KUBECONFIG环境变量指向K3S的</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> KUBECONFIG=/etc/rancher/k3s/k3s.yaml<br></code></pre></td></tr></table></figure>
+                
                 
               </div>
             
@@ -417,12 +291,12 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E8%BF%90%E7%BB%B4/" class="category-chain-item">运维</a>
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
   
   
     <span>></span>
     
-  <a href="/categories/%E8%BF%90%E7%BB%B4/Kubernetes/" class="category-chain-item">Kubernetes</a>
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis/" class="category-chain-item">Redis</a>
   
   
 
@@ -439,11 +313,11 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/K3s/" class="print-no-link">#K3s</a>
+        <a href="/tags/Redis/" class="print-no-link">#Redis</a>
       
-        <a href="/tags/Kubesphere/" class="print-no-link">#Kubesphere</a>
+        <a href="/tags/Cluster/" class="print-no-link">#Cluster</a>
       
-        <a href="/tags/Helm/" class="print-no-link">#Helm</a>
+        <a href="/tags/Docker/" class="print-no-link">#Docker</a>
       
     </div>
   
@@ -455,8 +329,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>K3s+Kubesphere+Helm 部署</div>
-      <div>https://bakacola.github.io/2023/10/91349a007d9e.html</div>
+      <div>Redis集群部署</div>
+      <div>https://bakacola.github.io/2023/10/2526cc97d9e8.html</div>
     </div>
     <div class="license-meta">
       
@@ -471,11 +345,6 @@
           <div>2023年10月31日</div>
         </div>
       
-      
-        <div class="license-meta-item license-meta-date">
-          <div>更新于</div>
-          <div>2023年10月31日</div>
-        </div>
       
       
         <div class="license-meta-item">
@@ -505,15 +374,21 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/10/5d84408ae74b.html" title="Redis集群部署">
+                      <a href="/2023/10/cca99601dc93.html" title="Untitled">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Redis集群部署</span>
+                        <span class="hidden-mobile">Untitled</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2023/10/a49bd50ea128.html" title="K3s+Kubesphere+Helm 部署">
+                        <span class="hidden-mobile">K3s+Kubesphere+Helm 部署</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
