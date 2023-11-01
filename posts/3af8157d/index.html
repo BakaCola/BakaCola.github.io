@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          2.6k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          17 分钟
+          22 分钟
         
       </span>
     
@@ -381,14 +381,32 @@
 <h2 id="卸载K3s"><a href="#卸载K3s" class="headerlink" title="卸载K3s"></a>卸载K3s</h2><p>若使用的为脚本安装方式，则在安装过程中会生成一个卸载脚本，该脚本为于</p>
 <p><code>/usr/local/bin/k3s-uninstall.sh</code>或者<code>/usr/local/bin/k3s-uninstall.sh</code></p>
 <p>可以通过以下指令卸载K3S：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><br>bash /usr/local/bin/k3s-uninstall.sh<br><span class="hljs-comment"># 或者使用以下指令</span><br>bash /usr/local/bin/k3s-uninstall.sh<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">bash /usr/local/bin/k3s-uninstall.sh<br><span class="hljs-comment"># 或者使用以下指令</span><br>bash /usr/local/bin/k3s-uninstall.sh<br></code></pre></td></tr></table></figure>
 
 
 
 <h1 id="在K3s上部署Kubesphere"><a href="#在K3s上部署Kubesphere" class="headerlink" title="在K3s上部署Kubesphere"></a>在K3s上部署Kubesphere</h1><h2 id="安装Kubesphere"><a href="#安装Kubesphere" class="headerlink" title="安装Kubesphere"></a>安装Kubesphere</h2><blockquote>
 <p>参考连接：<a target="_blank" rel="noopener" href="https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/introduction/overview/">https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/introduction/overview/</a></p>
 </blockquote>
-<h3 id="卸载Kubesphere"><a href="#卸载Kubesphere" class="headerlink" title="卸载Kubesphere"></a>卸载Kubesphere</h3><blockquote>
+<ol>
+<li>在完成K3s的安装后，可以通过使用kubectl应用配置文件，来实现Kubesphere的安装。具体指令如下所示：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl apply -f https://github.com/kubesphere/ks-installer/releases/download/v3.4.0/kubesphere-installer.yaml<br>kubectl apply -f https://github.com/kubesphere/ks-installer/releases/download/v3.4.0/cluster-configuration.yaml<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>通过检查安装日志，来查看Kubesphere安装情况：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl logs -n kubesphere-system $(kubectl get pod -n kubesphere-system -l <span class="hljs-string">&#x27;app in (ks-install, ks-installer)&#x27;</span> -o jsonpath=<span class="hljs-string">&#x27;&#123;.items[0].metadata.name&#125;&#x27;</span>) -f<br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>使用 <code>kubectl get pod --all-namespaces</code> 查看所有 Pod 在 KubeSphere 相关的命名空间是否正常运行。如果是正常运行，请通过以下命令来检查控制台的端口（默认为 30880）：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl get svc/ks-console -n kubesphere-system<br></code></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>确保在安全组中打开了 30880 端口，通过 NodePort (<code>IP:30880</code>) 使用默认帐户和密码 (<code>admin/P@88w0rd</code>) 访问 Web 控制台。</li>
+</ol>
+<h2 id="卸载Kubesphere"><a href="#卸载Kubesphere" class="headerlink" title="卸载Kubesphere"></a>卸载Kubesphere</h2><blockquote>
 <p>参考连接：<a target="_blank" rel="noopener" href="https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/uninstall-kubesphere-from-k8s/">https://www.kubesphere.io/zh/docs/v3.4/installing-on-kubernetes/uninstall-kubesphere-from-k8s/</a></p>
 </blockquote>
 <p>使用</p>
