@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          3.7k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          22 分钟
+          31 分钟
         
       </span>
     
@@ -316,6 +316,7 @@
 <p>或者使用镜像源下载脚本并使用国内镜像进行部署（推荐）。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -<br></code></pre></td></tr></table></figure>
 
+<p>在执行安装时，同时也会安装其它一些应用程序，包括 <code>kubectl</code>、<code>crictl</code>、<code>ctr</code>、<code>k3s-killall.sh</code> 和 <code>k3s-uninstall.sh</code>。</p>
 <h2 id="使用离线镜像进行部署"><a href="#使用离线镜像进行部署" class="headerlink" title="使用离线镜像进行部署"></a>使用离线镜像进行部署</h2><h2 id="指定配置项安装K3s"><a href="#指定配置项安装K3s" class="headerlink" title="指定配置项安装K3s"></a>指定配置项安装K3s</h2><blockquote>
 <p>参考连接：<a target="_blank" rel="noopener" href="https://docs.k3s.io/zh/installation/configuration">https://docs.k3s.io/zh/installation/configuration</a></p>
 </blockquote>
@@ -398,6 +399,10 @@
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl logs -n kubesphere-system $(kubectl get pod -n kubesphere-system -l <span class="hljs-string">&#x27;app in (ks-install, ks-installer)&#x27;</span> -o jsonpath=<span class="hljs-string">&#x27;&#123;.items[0].metadata.name&#125;&#x27;</span>) -f<br></code></pre></td></tr></table></figure>
 
+<p>通过检查日志，应该可以看到如下的日志信息：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs text">#####################################################<br>###              Welcome to KubeSphere!           ###<br>#####################################################<br><br>Console: http://192.168.1.100:30880<br>Account: admin<br>Password: P@88w0rd<br>NOTES：<br>  1. After you log into the console, please check the<br>     monitoring status of service components in<br>     &quot;Cluster Management&quot;. If any service is not<br>     ready, please wait patiently until all components<br>     are up and running.<br>  2. Please change the default password after login.<br><br>#####################################################<br>https://kubesphere.io             2023-11-10 10:27:52<br>#####################################################<br></code></pre></td></tr></table></figure>
+
+<p>其中可以找到访问Kubesphere的网址<code>http://192.168.1.100:30880</code>，以及对应的默认用户名<code>admin</code>和默认密码<code>P@88w0rd</code></p>
 <ol start="3">
 <li>使用 <code>kubectl get pod --all-namespaces</code> 查看所有 Pod 在 KubeSphere 相关的命名空间是否正常运行。如果是正常运行，请通过以下命令来检查控制台的端口（默认为 30880）：</li>
 </ol>
@@ -414,10 +419,25 @@
 <h1 id="Helm部署"><a href="#Helm部署" class="headerlink" title="Helm部署"></a>Helm部署</h1><h3 id="安装Helm"><a href="#安装Helm" class="headerlink" title="安装Helm"></a>安装Helm</h3><blockquote>
 <p>参考连接：<a target="_blank" rel="noopener" href="https://helm.sh/zh/docs/intro/install/">https://helm.sh/zh/docs/intro/install/</a></p>
 </blockquote>
+<ol>
+<li>从Github上下载所需要的Helm版本对应文件，下载链接：<a target="_blank" rel="noopener" href="https://github.com/helm/helm/releases%EF%BC%8C%E6%88%96%E5%9C%A8%E5%85%B6%E5%AE%83%E8%AE%BE%E5%A4%87%E4%B8%8A%E4%B8%8B%E8%BD%BD%E5%AE%8C%E5%AF%B9%E5%BA%94%E7%9A%84Helm%E5%AE%89%E8%A3%85%E5%8C%85%E5%90%8E%E4%BC%A0%E8%BE%93%E5%88%B0%E5%BE%85%E5%AE%89%E8%A3%85Helm%E7%9A%84%E8%AE%BE%E5%A4%87%E4%B8%8A">https://github.com/helm/helm/releases，或在其它设备上下载完对应的Helm安装包后传输到待安装Helm的设备上</a></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -O https://get.helm.sh/helm-v3.13.2-linux-amd64.tar.gz<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>解压所下载的安装包：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">tar -zxvf helm-v3.13.2-linux-amd64.tar.gz<br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>将解压完成后的文件移动到<code>/usr/local/bin/</code>目录下</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mv</span> linux-amd64/helm /usr/local/bin/helm<br></code></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：在安装完Helm后，应该指定KUBECONFIG环境变量指向K3S的配置文件，否则在使用helm时可能出现无法正常使用的情况。</p>
 <blockquote>
 <p>参考连接：</p>
 </blockquote>
-<p><strong>注意</strong>：在安装完Helm后，应该指定KUBECONFIG环境变量指向K3S的</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> KUBECONFIG=/etc/rancher/k3s/k3s.yaml<br></code></pre></td></tr></table></figure>
                 
               </div>
@@ -496,9 +516,21 @@
             
               
               
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
                   <span class="hint--top hint--rounded" aria-label="BY - 署名">
                     <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
                   </span>
                 </a>
               
