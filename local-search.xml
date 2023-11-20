@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>Frp的使用</title>
+    <link href="/posts/29dc5933/"/>
+    <url>/posts/29dc5933/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p>参考连接：<a href="https://gofrp.org/zh-cn/docs/">https://gofrp.org/zh-cn/docs/</a></p></blockquote><p>记得早些年间，开mc的服务器时，只需要在路由器中打开DMZ主机（危险操作），既可以让其它的伙伴连上本机，就可以快乐的进行游戏了。然而，现在想要把自己的所部署的服务暴露给外网，并不是一件简单的事。但是，利用Frp+一台具有公网IP的主机（以下简称服务器），就可以实现通过转发的方式，将自己的服务先与服务器进行通信，在让服务器与其它主机进行连接，<del>就可以再续当年的快乐，继续愉快的联机了！</del></p><h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>Frp</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Ansible部署，Ad-Hoc、Playbook的使用</title>
     <link href="/posts/c5767e27/"/>
     <url>/posts/c5767e27/</url>
